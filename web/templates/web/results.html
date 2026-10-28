@@ -1,0 +1,348 @@
+{% extends "web/base.html" %}
+
+{% block title %}Journey Results | Karachi Public Transport{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-lg-5 results-page">
+
+    <!-- Page heading -->
+    <div class="results-heading mb-4">
+        <span class="results-eyebrow">KARACHI PUBLIC TRANSPORT COMPANION</span>
+        <h1 class="fw-bold mt-2 mb-2">Journey Results</h1>
+        <p class="text-muted mb-0">
+            Compare your available journeys by time, fare and bus changes.
+        </p>
+    </div>
+
+    <!-- Error message -->
+    {% if error %}
+        <div class="alert alert-danger results-alert" role="alert">
+            <div class="fw-bold mb-1">We couldn't plan this journey</div>
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if searched and not error %}
+
+        <!-- Journey route summary -->
+        <section class="journey-overview mb-5" aria-label="Journey overview">
+            <div class="overview-title">
+                <span class="overview-icon" aria-hidden="true">↗</span>
+                <div>
+                    <h2 class="h5 fw-bold mb-1">Your Journey</h2>
+                    <p class="small text-muted mb-0">Your selected starting point and destination</p>
+                </div>
+            </div>
+
+            <div class="journey-endpoints">
+                <div class="endpoint">
+                    <span class="endpoint-dot start-dot" aria-hidden="true"></span>
+                    <div>
+                        <div class="endpoint-label">STARTING POINT</div>
+                        <div class="endpoint-name">{{ from_name }}</div>
+                    </div>
+                </div>
+
+                <div class="endpoint-connector" aria-hidden="true"></div>
+
+                <div class="endpoint">
+                    <span class="endpoint-dot destination-dot" aria-hidden="true"></span>
+                    <div>
+                        <div class="endpoint-label">DESTINATION</div>
+                        <div class="endpoint-name">{{ to_name }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Options heading -->
+        <div class="options-heading mb-4">
+            <div>
+                <span class="results-eyebrow">YOUR AVAILABLE ROUTES</span>
+                <h2 class="h3 fw-bold mt-2 mb-1">Compare Your Options</h2>
+                <p class="text-muted mb-0">
+                    Select an option to review its complete journey details.
+                </p>
+            </div>
+            {% if options %}
+                <span class="options-count">
+                    {{ options|length }} option{{ options|length|pluralize }}
+                </span>
+            {% endif %}
+        </div>
+
+        {% if options %}
+            <div class="journey-options">
+                {% for option in options %}
+                    <article class="journey-option-card mb-4">
+
+                        <!-- Option title -->
+                        <div class="option-header">
+                            <div class="option-heading-main">
+                                <span class="option-number">
+                                    {% if option.mode == "fastest" %}
+                                        01
+                                    {% elif option.mode == "cheapest" %}
+                                        02
+                                    {% else %}
+                                        03
+                                    {% endif %}
+                                </span>
+
+                                <div>
+                                    <h3 class="h5 fw-bold mb-1">
+                                        {{ option.label }}
+                                    </h3>
+
+                                    {% if option.mode == "fastest" %}
+                                        <p class="option-description mb-0">
+                                            Shortest estimated journey time
+                                        </p>
+                                    {% elif option.mode == "cheapest" %}
+                                        <p class="option-description mb-0">
+                                            Lowest estimated total fare
+                                        </p>
+                                    {% elif option.mode == "fewest_transfers" %}
+                                        <p class="option-description mb-0">
+                                            Fewest bus changes
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <span class="transfer-pill">
+                                {{ option.transfers }}
+                                transfer{{ option.transfers|pluralize }}
+                            </span>
+                        </div>
+
+                        <!-- Summary statistics -->
+                        <div class="option-metrics">
+
+                            <div class="metric-box metric-time">
+                                <span class="metric-label">ESTIMATED TIME</span>
+                                <div class="metric-value">
+                                    {{ option.total_minutes }}
+                                    <span class="metric-unit">min</span>
+                                </div>
+                                <span class="metric-caption">Total journey</span>
+                            </div>
+
+                            <div class="metric-box metric-fare">
+                                <span class="metric-label">TOTAL FARE</span>
+                                <div class="metric-value">
+                                    <span class="metric-unit">PKR</span>
+                                    {{ option.total_fare }}
+                                </div>
+                                <span class="metric-caption">Estimated cost</span>
+                            </div>
+
+                            <div class="metric-box metric-transfers">
+                                <span class="metric-label">BUS CHANGES</span>
+                                <div class="metric-value">
+                                    {{ option.transfers }}
+                                </div>
+                                <span class="metric-caption">Transfers required</span>
+                            </div>
+
+                        </div>
+
+                        <!-- Expand journey details -->
+                        <div class="option-footer">
+                            <button
+                                class="details-toggle"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#journeyDetails{{ forloop.counter }}"
+                                aria-expanded="false"
+                                aria-controls="journeyDetails{{ forloop.counter }}">
+
+                                <span class="details-toggle-text">
+                                    Show journey details
+                                </span>
+                                <span class="details-toggle-icon" aria-hidden="true">＋</span>
+                            </button>
+                        </div>
+
+                        <!-- Collapsible details -->
+                        <div class="collapse" id="journeyDetails{{ forloop.counter }}">
+                            <div class="journey-details">
+
+                                <div class="details-heading mb-4">
+                                    <h4 class="h5 fw-bold mb-1">Your Journey Steps</h4>
+                                    <p class="text-muted small mb-0">
+                                        Follow each bus leg from boarding to arrival.
+                                    </p>
+                                </div>
+
+                                {% for leg in option.legs %}
+                                    <div class="bus-leg-card">
+
+                                        <div class="bus-leg-heading">
+                                            <div class="bus-leg-route">
+                                                <span class="bus-icon" aria-hidden="true">B</span>
+                                                <div>
+                                                    <div class="route-number-label">
+                                                        BUS {{ leg.route_number }}
+                                                    </div>
+                                                    <div class="route-name">
+                                                        {{ leg.route_name }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="leg-fare">
+                                                <span class="leg-fare-label">LEG FARE</span>
+                                                <span class="leg-fare-value">
+                                                    PKR {{ leg.fare }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Boarding and destination -->
+                                        <div class="leg-stops">
+
+                                            <div class="leg-stop-row">
+                                                <span class="leg-stop-marker boarding-marker"
+                                                    aria-hidden="true"></span>
+                                                <div>
+                                                    <div class="leg-stop-label">
+                                                        BOARD AT
+                                                    </div>
+                                                    <div class="leg-stop-name">
+                                                        {{ leg.from_stop }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="leg-stop-line" aria-hidden="true"></div>
+
+                                            <div class="leg-stop-row">
+                                                <span class="leg-stop-marker arrival-marker"
+                                                    aria-hidden="true"></span>
+                                                <div>
+                                                    <div class="leg-stop-label">
+                                                        GET OFF AT
+                                                    </div>
+                                                    <div class="leg-stop-name">
+                                                        {{ leg.to_stop }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <!-- Waiting and riding time -->
+                                        <div class="leg-timing-grid">
+                                            <div class="leg-timing-item">
+                                                <span class="timing-symbol" aria-hidden="true">W</span>
+                                                <div>
+                                                    <div class="timing-label">ESTIMATED WAIT</div>
+                                                    <div class="timing-value">
+                                                        {{ leg.wait_minutes }} min
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="leg-timing-item">
+                                                <span class="timing-symbol ride-symbol" aria-hidden="true">R</span>
+                                                <div>
+                                                    <div class="timing-label">ESTIMATED RIDE</div>
+                                                    <div class="timing-value">
+                                                        {{ leg.ride_minutes }} min
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Stops included in this leg -->
+                                        {% if leg.stops %}
+                                            <div class="stops-section">
+                                                <div class="stops-heading">
+                                                    Stops on this bus leg
+                                                </div>
+
+                                                <div class="stops-list">
+                                                    {% for stop in leg.stops %}
+                                                        <span class="journey-stop-chip">
+                                                            {{ stop }}
+                                                        </span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+
+                                    {% if not forloop.last %}
+                                        <div class="transfer-connector">
+                                            <span class="transfer-connector-line"
+                                                aria-hidden="true"></span>
+                                            <span class="transfer-connector-label">
+                                                CHANGE BUS
+                                            </span>
+                                            <span class="transfer-connector-line"
+                                                aria-hidden="true"></span>
+                                        </div>
+                                    {% endif %}
+
+                                {% empty %}
+                                    <div class="alert alert-info" role="alert">
+                                        Detailed bus-leg information is not available
+                                        for this option.
+                                    </div>
+                                {% endfor %}
+
+                                <!-- Safety advisories returned for this option -->
+                                {% if option.advisories %}
+                                    <section class="journey-advisories mt-4">
+                                        <h4 class="h6 fw-bold mb-3">
+                                            Safety Information
+                                        </h4>
+
+                                        {% for advisory in option.advisories %}
+                                            <div class="advisory-card
+                                                {% if advisory.level == 'warning' %}
+                                                    advisory-warning
+                                                {% elif advisory.level == 'caution' %}
+                                                    advisory-caution
+                                                {% else %}
+                                                    advisory-info
+                                                {% endif %}"
+                                                role="alert">
+
+                                                <span class="advisory-indicator"
+                                                    aria-hidden="true"></span>
+                                                <div>{{ advisory.message }}</div>
+                                            </div>
+                                        {% endfor %}
+                                    </section>
+                                {% endif %}
+
+                            </div>
+                        </div>
+
+                    </article>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="no-options-card">
+                <h3 class="h5 fw-bold">No journey options found</h3>
+                <p class="text-muted mb-0">
+                    Try choosing different starting and destination stops.
+                </p>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Return to planning -->
+    <div class="plan-again-section mt-5">
+        <a href="{% url 'home' %}" class="plan-again-button">
+            <span aria-hidden="true">←</span>
+            Plan Another Journey
+        </a>
+    </div>
+
+</div>
+{% endblock %}

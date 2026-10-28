@@ -1,0 +1,155 @@
+{% extends "web/base.html" %}
+
+{% block title %}Explore Routes | Karachi Transport Companion{% endblock %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<section class="mb-5">
+    <span class="section-eyebrow">KARACHI TRANSPORT NETWORK</span>
+
+    <h1 class="display-5 fw-bold mt-2 mb-3">
+        Explore Bus Routes
+    </h1>
+
+    <p class="text-secondary fs-5 mb-0">
+        Discover available bus services, check fares, and explore route details.
+    </p>
+</section>
+
+<!-- ROUTE SUMMARY -->
+<section class="mb-4">
+    <div class="card planner-card border-0 rounded-4">
+        <div class="card-body p-4 d-flex flex-column flex-md-row
+                    justify-content-between align-items-md-center gap-3">
+
+            <div>
+                <span class="section-eyebrow">AVAILABLE SERVICES</span>
+                <h2 class="h4 fw-bold mt-2 mb-1">
+                    Find your bus route
+                </h2>
+                <p class="text-secondary mb-0">
+                    Select any route to view its stops and available information.
+                </p>
+            </div>
+
+            <a href="{% url 'plan' %}"
+               class="btn btn-primary px-4 py-3">
+                Plan Your Journey →
+            </a>
+
+        </div>
+    </div>
+</section>
+
+<!-- BUS ROUTE CARDS -->
+<section class="mb-5">
+    <div class="row g-4">
+
+        {% for route in routes %}
+
+            <div class="col-md-6 col-xl-4">
+                <article class="card route-card h-100 rounded-4">
+
+                    <div class="card-body p-4 d-flex flex-column">
+
+                        <!-- ROUTE NUMBER -->
+                        <div class="d-flex justify-content-between
+                                    align-items-center mb-4">
+
+                            <div class="route-number">
+                                {{ route.number }}
+                            </div>
+
+                            <span class="route-label">
+                                BUS SERVICE
+                            </span>
+
+                        </div>
+
+                        <!-- ROUTE NAME -->
+                        <h2 class="h5 fw-bold mb-4">
+                            {{ route.name }}
+                        </h2>
+
+                        <!-- FARE -->
+                        <div class="route-info-row mb-3">
+                            <div class="route-info-icon">₨</div>
+
+                            <div>
+                                <div class="small text-secondary">
+                                    Full-route fare
+                                </div>
+
+                                <div class="fw-bold">
+                                    PKR {{ route.fare }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SERVICE FREQUENCY -->
+                        <div class="route-info-row mb-4">
+                            <div class="route-info-icon">◷</div>
+
+                            <div>
+                                <div class="small text-secondary">
+                                    Service frequency
+                                </div>
+
+                                <div class="fw-semibold">
+                                    Every {{ route.frequency_minutes }} minutes
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ROUTE DETAILS -->
+                        <a href="{% url 'route_detail' route.pk %}"
+                           class="btn btn-outline-primary w-100 mt-auto">
+                            View Route Details →
+                        </a>
+
+                    </div>
+                </article>
+            </div>
+
+        {% empty %}
+
+            <div class="col-12">
+                <div class="empty-routes rounded-4 p-5 text-center">
+
+                    <h2 class="h5 fw-bold mb-2">
+                        No routes available
+                    </h2>
+
+                    <p class="text-secondary mb-0">
+                        No bus routes have been added to the system yet.
+                    </p>
+
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </div>
+</section>
+
+<!-- BOTTOM CALL TO ACTION -->
+<section class="journey-note rounded-4 p-4 p-md-5 mb-4">
+
+    <span class="section-eyebrow">READY TO TRAVEL?</span>
+
+    <h2 class="h3 fw-bold mt-2 mb-3">
+        Plan your next journey.
+    </h2>
+
+    <p class="mb-4">
+        Choose your starting stop and destination to compare available journey options.
+    </p>
+
+    <a href="{% url 'plan' %}" class="btn btn-primary px-4">
+        Start Planning →
+    </a>
+
+</section>
+
+{% endblock %}

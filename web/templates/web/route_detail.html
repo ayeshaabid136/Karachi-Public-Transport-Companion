@@ -1,0 +1,327 @@
+{% extends "web/base.html" %}
+
+{% block title %}{{ route.number }} | Karachi Transport Companion{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- BACK BUTTON -->
+    <a href="{% url 'route_list' %}"
+       class="btn btn-outline-primary btn-sm mb-4">
+        ← Back to All Routes
+    </a>
+
+    <!-- ROUTE HEADER -->
+    <section class="journey-note rounded-4 p-4 p-md-5 mb-4">
+
+        <span class="section-eyebrow">KARACHI BUS NETWORK</span>
+
+        <div class="d-flex flex-column flex-md-row
+                    justify-content-between align-items-md-start gap-3 mt-3">
+
+            <div>
+                <span class="route-label">
+                    ROUTE {{ route.number }}
+                </span>
+
+                <h1 class="display-6 fw-bold mt-3 mb-2">
+                    {{ route.name }}
+                </h1>
+
+                <p class="text-secondary mb-0">
+                    Route information, bus stops, timings and safety notices.
+                </p>
+            </div>
+
+            <div class="route-number">
+                {{ route.number }}
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ROUTE INFORMATION -->
+    <section class="mb-5">
+
+        <div class="section-heading mb-4">
+            <span class="section-eyebrow">ROUTE OVERVIEW</span>
+            <h2 class="h3 fw-bold mt-2 mb-0">
+                Your bus at a glance
+            </h2>
+        </div>
+
+        <div class="row g-3">
+
+            <!-- FULL FARE -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card route-card h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="route-info-icon mb-3">₨</div>
+
+                        <p class="small text-secondary mb-1">
+                            Full-route fare
+                        </p>
+
+                        <h3 class="h4 fw-bold mb-0">
+                            PKR {{ route.fare }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MINIMUM FARE -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card route-card h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="route-info-icon mb-3">₨</div>
+
+                        <p class="small text-secondary mb-1">
+                            Minimum fare
+                        </p>
+
+                        <h3 class="h4 fw-bold mb-0">
+                            PKR {{ route.min_fare }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FIRST BUS -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card route-card h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="route-info-icon mb-3">◷</div>
+
+                        <p class="small text-secondary mb-1">
+                            First bus
+                        </p>
+
+                        <h3 class="h5 fw-bold mb-0">
+                            {{ route.first_bus_time|time:"g:i A"|default:"Not specified" }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LAST BUS -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card route-card h-100 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="route-info-icon mb-3">◷</div>
+
+                        <p class="small text-secondary mb-1">
+                            Last bus
+                        </p>
+
+                        <h3 class="h5 fw-bold mb-0">
+                            {{ route.last_bus_time|time:"g:i A"|default:"Not specified" }}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SERVICE FREQUENCY -->
+        <div class="card planner-card border-0 rounded-4 mt-3">
+            <div class="card-body p-4 d-flex flex-column flex-sm-row
+                        justify-content-between align-items-sm-center gap-3">
+
+                <div>
+                    <span class="section-eyebrow">SERVICE FREQUENCY</span>
+
+                    <h3 class="h5 fw-bold mt-2 mb-1">
+                        Approximately every {{ route.frequency_minutes }} minutes
+                    </h3>
+
+                    <p class="text-secondary small mb-0">
+                        This is the recorded service interval, not a guaranteed waiting time.
+                    </p>
+                </div>
+
+                <div class="route-info-icon">◷</div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- BUS STOP TIMELINE -->
+    <section class="mb-5">
+
+        <div class="section-heading mb-4">
+            <span class="section-eyebrow">YOUR ROUTE IN ORDER</span>
+
+            <h2 class="h3 fw-bold mt-2 mb-2">
+                Bus Stops
+            </h2>
+
+            <p class="text-secondary mb-0">
+                Follow the stops in their recorded travel sequence.
+            </p>
+        </div>
+
+        <div class="card route-card rounded-4">
+            <div class="card-body p-4 p-md-5">
+
+                {% for item in route_stops %}
+
+                    <div class="d-flex gap-3">
+
+                        <!-- STOP NUMBER AND CONNECTOR -->
+                        <div class="d-flex flex-column align-items-center">
+
+                            <span class="badge bg-success rounded-pill
+                                         d-flex align-items-center justify-content-center"
+                                  style="width: 36px; height: 36px; font-size: 14px;">
+                                {{ forloop.counter }}
+                            </span>
+
+                            {% if not forloop.last %}
+                                <div style="width: 2px; min-height: 42px;
+                                            background: #b9e7ce;">
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- STOP DETAILS -->
+                        <div class="flex-grow-1 pb-4">
+
+                            <h3 class="h6 fw-bold mb-1">
+                                {{ item.stop.name }}
+                            </h3>
+
+                            {% if item.stop.area %}
+                                <p class="text-secondary small mb-2">
+                                    {{ item.stop.area }}
+                                </p>
+                            {% endif %}
+
+                            {% if not forloop.first %}
+                                <span class="badge rounded-pill
+                                             text-bg-light border">
+                                    {{ item.minutes_from_previous }} min
+                                    from previous stop
+                                </span>
+                            {% else %}
+                                <span class="badge rounded-pill
+                                             text-bg-light border">
+                                    Starting stop
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <div class="text-center py-4">
+                        <h3 class="h5 fw-bold">
+                            No stops available
+                        </h3>
+
+                        <p class="text-secondary mb-0">
+                            Stop information has not been added for this route yet.
+                        </p>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <p class="text-secondary small mt-3">
+            Travel times are shown as recorded in the route data. Actual journey
+            times may vary with traffic and operating conditions.
+        </p>
+
+    </section>
+
+    <!-- SAFETY ADVISORIES -->
+    <section class="mb-5">
+
+        <div class="section-heading mb-4">
+            <span class="section-eyebrow">TRAVEL SAFELY</span>
+
+            <h2 class="h3 fw-bold mt-2 mb-2">
+                Safety Advisories
+            </h2>
+
+            <p class="text-secondary mb-0">
+                Review the safety information available for this route.
+            </p>
+        </div>
+
+        {% for advisory in advisories %}
+
+            <div class="alert
+                {% if advisory.level == 'warning' %}
+                    alert-danger
+                {% elif advisory.level == 'caution' %}
+                    alert-warning
+                {% else %}
+                    alert-info
+                {% endif %}
+                rounded-4 p-4 mb-3">
+
+                <div class="fw-bold mb-2">
+                    {{ advisory.get_level_display }}
+                </div>
+
+                <p class="mb-0">
+                    {{ advisory.message }}
+                </p>
+
+                {% if advisory.stop %}
+                    <p class="small mt-2 mb-0">
+                        <strong>Related stop:</strong>
+                        {{ advisory.stop.name }}
+                    </p>
+                {% endif %}
+
+            </div>
+
+        {% empty %}
+
+            <div class="card route-card rounded-4">
+                <div class="card-body p-4">
+                    <h3 class="h6 fw-bold">
+                        No safety advisories listed
+                    </h3>
+
+                    <p class="text-secondary mb-0">
+                        There are currently no safety advisories associated with this route.
+                    </p>
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </section>
+
+    <!-- BOTTOM ACTION -->
+    <section class="journey-note rounded-4 p-4 p-md-5 mb-4">
+
+        <span class="section-eyebrow">READY TO TRAVEL?</span>
+
+        <h2 class="h3 fw-bold mt-2 mb-3">
+            Find a journey that works for you.
+        </h2>
+
+        <p class="mb-4">
+            Choose your starting stop and destination to compare available options.
+        </p>
+
+        <a href="{% url 'plan' %}" class="btn btn-primary px-4">
+            Plan Your Journey →
+        </a>
+
+    </section>
+
+</div>
+
+{% endblock %}

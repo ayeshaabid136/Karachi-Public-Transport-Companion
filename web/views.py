@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 
 from planner.services import compare_routes
-from transport.models import Route, Stop
+from transport.models import Route, Stop, SafetyAdvisory
 
 MODE_LABELS = {
     "fastest": "Fastest",
@@ -23,6 +23,9 @@ def home(request):
     return render(request, "web/home.html", {
         "routes": Route.objects.order_by("number"),
         "stops": all_stops(),
+        "advisories": SafetyAdvisory.objects.select_related(
+            "route", "stop"
+        ).order_by("-id"),
     })
 
 

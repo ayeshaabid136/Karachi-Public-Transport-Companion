@@ -1,0 +1,356 @@
+{% extends "web/base.html" %}
+{% load static %}
+
+{% block title %}Home | Karachi Transport Companion{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero-section rounded-4 mb-5">
+    <div class="hero-content">
+
+        <div class="hero-text">
+            <span class="hero-badge">YOUR CITY. YOUR JOURNEY.</span>
+
+            <h1>
+                Travel Karachi<br>
+                <span>with confidence.</span>
+            </h1>
+
+            <p>
+                Plan your bus journey, compare travel options,
+                and find the route that works best for you.
+            </p>
+
+            <a href="#journey-planner" class="hero-button">
+                Plan Your Journey <span>→</span>
+            </a>
+        </div>
+
+        <!-- KARACHI BUS IMAGE -->
+        <div class="hero-visual">
+
+            <img
+                src="{% static 'web/images/karachi-bus.jpeg' %}"
+                alt="Karachi city bus"
+                class="hero-landmark">
+            
+            <!-- Floating information card -->
+            <div class="hero-info-card">
+                <div class="hero-info-icon">✦</div>
+
+                <div>
+                    <small>MADE FOR KARACHI COMMUTERS</small>
+                    <h2>Your next journey starts here.</h2>
+                    <p>Compare route options before you leave.</p>
+                </div>
+            </div>
+
+        </div>
+
+            <!-- Floating information card -->
+            <div class="hero-info-card">
+                <div class="hero-info-icon">✦</div>
+
+                <div>
+                    <small>MADE FOR KARACHI COMMUTERS</small>
+                    <h2>Your next journey starts here.</h2>
+                    <p>Compare route options before you leave.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- JOURNEY PLANNER -->
+<section id="journey-planner" class="mb-5">
+
+    <div class="section-heading mb-4">
+        <span class="section-eyebrow">PLAN YOUR TRIP</span>
+
+        <h2 class="fw-bold mt-2 mb-2">
+            Where would you like to go?
+        </h2>
+
+        <p class="text-secondary mb-0">
+            Select your starting stop and destination to compare available journeys.
+        </p>
+    </div>
+
+    <div class="card planner-card border-0 rounded-4">
+        <div class="card-body p-4 p-md-5">
+
+            <form action="{% url 'plan' %}" method="get">
+
+                <div class="row g-4 align-items-end">
+
+                    <div class="col-md-6">
+                        <label for="from" class="form-label fw-semibold">
+                            Starting Stop
+                        </label>
+
+                        <select id="from"
+                                name="from"
+                                class="form-select form-select-lg"
+                                required>
+
+                            <option value="">
+                                Choose your starting point
+                            </option>
+
+                            {% for stop in stops %}
+                                <option value="{{ stop.name }}">
+                                    {{ stop.name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="to" class="form-label fw-semibold">
+                            Destination
+                        </label>
+
+                        <select id="to"
+                                name="to"
+                                class="form-select form-select-lg"
+                                required>
+
+                            <option value="">
+                                Choose your destination
+                            </option>
+
+                            {% for stop in stops %}
+                                <option value="{{ stop.name }}">
+                                    {{ stop.name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit"
+                                class="btn btn-primary btn-lg w-100 fw-semibold">
+                            Find My Journey
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
+            <div class="planner-note mt-4">
+                <span class="me-2">ⓘ</span>
+                Journey estimates are based on available route data, not live bus tracking.
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- AVAILABLE BUS ROUTES -->
+<section class="mb-5">
+
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-end gap-3 mb-4">
+
+        <div class="section-heading">
+            <span class="section-eyebrow">EXPLORE THE NETWORK</span>
+
+            <h2 class="fw-bold mt-2 mb-2">
+                Available Bus Routes
+            </h2>
+
+            <p class="text-secondary mb-0">
+                Discover bus services and explore their stops and fares.
+            </p>
+        </div>
+
+        <a href="{% url 'route_list' %}"
+           class="btn btn-outline-primary px-4">
+            Explore All Routes →
+        </a>
+
+    </div>
+
+    <div class="row g-4">
+
+        {% for route in routes %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card route-card h-100 rounded-4">
+
+                    <div class="card-body p-4 d-flex flex-column">
+
+                        <div class="d-flex justify-content-between
+                                    align-items-center mb-4">
+
+                            <div class="route-number">
+                                {{ route.number }}
+                            </div>
+
+                            <span class="route-label">
+                                BUS SERVICE
+                            </span>
+
+                        </div>
+
+                        <h3 class="h5 fw-bold mb-3">
+                            {{ route.name }}
+                        </h3>
+
+                        <div class="route-info-row mb-3">
+
+                            <div class="route-info-icon">₨</div>
+
+                            <div>
+                                <div class="small text-secondary">
+                                    Full-route fare
+                                </div>
+
+                                <div class="fw-bold">
+                                    PKR {{ route.fare }}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="route-info-row mb-4">
+
+                            <div class="route-info-icon">◷</div>
+
+                            <div>
+                                <div class="small text-secondary">
+                                    Service frequency
+                                </div>
+
+                                <div class="fw-semibold">
+                                    Every {{ route.frequency_minutes }} minutes (approx.)
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <a href="{% url 'route_detail' route.pk %}"
+                           class="btn btn-outline-primary w-100 mt-auto">
+                            View Route Details →
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+        {% empty %}
+
+            <div class="col-12">
+
+                <div class="empty-routes rounded-4 p-4 text-center">
+
+                    <h3 class="h5 fw-bold">
+                        No routes to display
+                    </h3>
+
+                    <p class="text-secondary mb-0">
+                        There are currently no available routes in the system.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+</section>
+
+
+<!-- FOOTER BANNER -->
+<section class="journey-note rounded-4 p-4 p-md-5 mb-4">
+
+    <span class="section-eyebrow">
+        TRAVEL WITH CONFIDENCE
+    </span>
+
+    <h2 class="h3 fw-bold mt-2 mb-2">
+        Make your next journey simpler.
+    </h2>
+
+    <p class="mb-4">
+        Compare the fastest, cheapest, and fewest-transfer options
+        using the route information available in the system.
+    </p>
+
+    <a href="#journey-planner" class="btn btn-primary px-4">
+        Plan a Journey →
+    </a>
+
+</section>
+
+
+<!-- Safety Information Section -->
+<section class="safety-section my-5" id="safety-information">
+    <div class="section-heading mb-4">
+        <span class="section-eyebrow">TRAVEL SMART</span>
+        <h2>Safety Information</h2>
+        <p>Check the latest safety advisories available in our transport database before you travel.</p>
+    </div>
+
+    {% if advisories %}
+        <div class="row g-3">
+            {% for advisory in advisories %}
+                <div class="col-12 col-md-6">
+                    <div class="safety-card h-100">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                            <h3 class="h5 mb-0">
+                                {% if advisory.level == "warning" %}
+                                    Safety Warning
+                                {% elif advisory.level == "caution" %}
+                                    Travel Caution
+                                {% else %}
+                                    Travel Information
+                                {% endif %}
+                            </h3>
+
+                            <span class="safety-level safety-level-{{ advisory.level }}">
+                                {{ advisory.get_level_display }}
+                            </span>
+                        </div>
+
+                        <p class="mb-3">{{ advisory.message }}</p>
+
+                        {% if advisory.route %}
+                            <p class="safety-location mb-1">
+                                <strong>Route:</strong>
+                                {{ advisory.route.number }} — {{ advisory.route.name }}
+                            </p>
+                        {% endif %}
+
+                        {% if advisory.stop %}
+                            <p class="safety-location mb-0">
+                                <strong>Stop:</strong> {{ advisory.stop.name }}
+                                {% if advisory.stop.area %}
+                                    ({{ advisory.stop.area }})
+                                {% endif %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="safety-empty">
+            <h3 class="h5">No safety advisories available</h3>
+            <p class="mb-0">
+                There are currently no safety notices in the transport database.
+                Please check route details for any available advisories.
+            </p>
+        </div>
+    {% endif %}
+</section>
+
+{% endblock %}
