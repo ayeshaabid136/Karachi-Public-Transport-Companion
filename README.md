@@ -1,10 +1,8 @@
-# Karachi Public Transport Companion (Backend)
+# Karachi Public Transport Companion
 
-A REST API that helps commuters in Karachi plan local bus journeys. Give it a starting stop and a destination, and it returns the best bus combinations with **estimated travel time, fare, number of transfers and safety tips**.
+A full-stack web application that helps commuters plan public transport journeys in Karachi. Users can select a starting stop and destination to explore bus journey options, estimated travel times, fares, transfers, and safety information.
 
-Built as a group project for **Software Project Management (506)**, Department of Computer Science, University of Karachi. The project is managed with Scrum, Jira, Microsoft Teams and Toggl Track.
-
-> This repository contains the **backend**. The mobile-first frontend (Django templates + Bootstrap) uses the API described below.
+Built as a group project for **Software Project Management (506)**, Department of Computer Science, University of Karachi. The project is managed with Scrum, Jira, Microsoft Teams, and Toggl Track.
 
 ---
 
@@ -22,7 +20,7 @@ Built as a group project for **Software Project Management (506)**, Department o
 
 ---
 
-## Tech stack
+## Tech Stack
 
 | Tool | Purpose |
 |---|---|
@@ -30,11 +28,28 @@ Built as a group project for **Software Project Management (506)**, Department o
 | Django | Web framework |
 | Django REST Framework | JSON API |
 | PostgreSQL | Database |
+| Django Templates | Frontend page rendering |
+| HTML5 | Web page structure |
+| Bootstrap 5 | Frontend layout and styling |
+| CSS3 | Custom styling |
 | Django TestCase | Automated tests |
 
 ---
 
-## Bus routes included
+## Frontend
+
+The frontend is built using Django templates, HTML, Bootstrap 5, and custom CSS.
+
+- `base.html` provides the shared page layout.
+- `home.html` provides the homepage.
+- `results.html` displays journey results.
+- `style.css` contains custom styling.
+
+The frontend works with the Django project and its existing views and data. Its functionality depends on the implemented backend logic and database.
+
+---
+
+## Bus Routes Included
 
 Five local bus routes, all bidirectional, with 70 different stops.
 
@@ -46,98 +61,141 @@ Five local bus routes, all bidirectional, with 70 different stops.
 | A3 | 13 | Malir Halt → Kemari |
 | D7 | 13 | Surjani Town → Tower |
 
-The data is stored in [`transport/routes_data.json`](transport/routes_data.json). Stop lists come from the team's research. Travel times, bus intervals, service hours and safety messages are **estimates** and should be verified.
+The data is stored in `transport/routes_data.json`. Stop lists come from the team's research. Travel times, bus intervals, service hours, and safety messages are estimates and should be verified.
 
 ---
 
-## Project structure
+## Project Structure
 
-```
-karachi_transport/
-├── config/                      Project settings and main URLs
-├── transport/                   Data layer
-│   ├── models.py                Stop, Route, RouteStop, SafetyAdvisory
-│   ├── serializers.py           Models → JSON
-│   ├── admin.py                 Django admin setup
-│   ├── routes_data.json         Real bus data
-│   └── management/commands/
-│       └── seed_data.py         Loads routes_data.json into the database
-├── planner/                     Logic layer
-│   ├── services.py              Route-search algorithm and fare rule
-│   ├── views.py                 API endpoints
-│   ├── urls.py                  API addresses
-│   └── tests.py                 Automated tests
-└── manage.py
+```text
+Karachi-Public-Transport-Companion/
+├── config/
+│   ├── settings.py
+│   ├── urls.py
+│   ├── asgi.py
+│   └── wsgi.py
+├── planner/
+│   ├── services.py
+│   ├── views.py
+│   ├── urls.py
+│   └── tests.py
+├── transport/
+│   ├── models.py
+│   ├── serializers.py
+│   ├── admin.py
+│   ├── routes_data.json
+│   └── management/
+│       └── commands/
+│           └── seed_data.py
+├── web/
+│   ├── views.py
+│   ├── urls.py
+│   ├── templates/
+│   │   └── web/
+│   │       ├── base.html
+│   │       ├── home.html
+│   │       └── results.html
+│   └── static/
+│       └── web/
+│           └── style.css
+├── manage.py
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## Getting started
+## Getting Started
 
 ### 1. Prerequisites
 
+Install the following before running the project:
+
 - Python 3.10 or newer
 - PostgreSQL
+- Git
 
-### 2. Clone and create a virtual environment
-
-```bash
-git clone <your-repository-url>
-cd karachi_transport
-python -m venv venv
-venv\Scripts\activate
-pip install django djangorestframework psycopg2-binary
-```
-
-On macOS or Linux, activate with `source venv/bin/activate`.
-
-### 3. Create the database
-
-In pgAdmin or `psql`, create an empty database:
-
-```sql
-CREATE DATABASE karachi_transport;
-```
-
-### 4. Configure the database password
-
-`config/settings.py` reads the password from an environment variable, so it is never committed to GitHub.
+### 2. Clone the Repository
 
 ```bash
-set DB_PASSWORD=your_postgres_password
+git clone https://github.com/ayeshaabid136/Karachi-Public-Transport-Companion.git
+cd Karachi-Public-Transport-Companion
 ```
 
-On macOS or Linux, use `export DB_PASSWORD=your_postgres_password`. If your PostgreSQL user, host or port are different from the defaults (`postgres`, `localhost`, `5432`), update the `DATABASES` section in `config/settings.py`.
+### 3. Create and Activate a Virtual Environment
 
-### 5. Create the tables and load the data
+Create the environment:
+
+```bash
+python -m venv .venv
+```
+
+On Windows:
+
+```bash
+.venv\Scripts\activate
+```
+
+On macOS or Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+### 4. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 5. Configure the Database
+
+Create the PostgreSQL database required by the project using pgAdmin or PostgreSQL tools.
+
+Check `config/settings.py` for the database name, username, password configuration, host, and port. Configure these values for your own local PostgreSQL installation.
+
+Do not publish database passwords, Django secret keys, or other credentials in the repository.
+
+### 6. Apply Migrations and Load Data
+
+Create the database tables:
 
 ```bash
 python manage.py migrate
+```
+
+If the project's `seed_data` management command is available, load the project data using:
+
+```bash
 python manage.py seed_data
+```
+
+To create an administrator account, run:
+
+```bash
 python manage.py createsuperuser
 ```
 
-`seed_data` prints `Loaded 70 stops and 5 routes.` It **deletes and reloads** all stops, routes and advisories each time, so edit `routes_data.json` (not the admin) when you change the data.
-
-### 6. Run the server
+### 7. Run the Project
 
 ```bash
 python manage.py runserver
 ```
 
-Open http://127.0.0.1:8000/api/stops/ to check it works. The admin site is at http://127.0.0.1:8000/admin/.
+Open the local development address in your browser:
 
-### 7. Run the tests
+`http://127.0.0.1:8000/`
 
-```bash
-python manage.py test
-```
+The Django administration page is available at:
 
-You should see `Ran 20 tests` and `OK`.
+`http://127.0.0.1:8000/admin/`
 
 ---
 
 ## API
+
+The project includes API endpoints for accessing transport information and planning journeys.
 
 All endpoints use `GET` and return JSON. The base path is `/api/`.
 
@@ -149,10 +207,9 @@ All endpoints use `GET` and return JSON. The base path is `/api/`.
 | `/api/plan/?from=<id>&to=<id>&mode=<mode>` | Journey options between two stops |
 | `/api/safety/?route=<number>` | Safety advisories (all if no route is given) |
 
-`mode` is optional: `fastest`, `cheapest`, `fewest_transfers` or `all` (default, returns three options).
+The `mode` parameter is optional. Supported modes are `fastest`, `cheapest`, `fewest_transfers`, and `all`.
 
-Stop ids change whenever the data is reloaded, so always look them up first with `/api/stops/?q=`.
-
+Stop IDs may change when data is reloaded, so retrieve the current IDs from the stops endpoint before planning a journey.
 
 ### Errors
 
@@ -161,81 +218,87 @@ Stop ids change whenever the data is reloaded, so always look them up first with
 | `from` or `to` is not a number | 400 |
 | `from` and `to` are the same stop | 400 |
 | Invalid `mode` | 400 |
-| Unknown stop id | 404 |
+| Unknown stop ID | 404 |
 | No journey exists between the stops | 404 |
 
 ---
 
-## How it works
+## How It Works
 
-### Data model
+### Data Model
 
-- **Stop**: a place where a bus stops
-- **Route**: a bus line with its fare range and how often buses come
-- **RouteStop**: the ordered stops of a route, with the minutes from the previous stop
-- **SafetyAdvisory**: a tip or warning for a route or a stop
+- **Stop:** A place where a bus stops.
+- **Route:** A bus line with its fare range and bus frequency.
+- **RouteStop:** The ordered stops of a route, with the minutes from the previous stop.
+- **SafetyAdvisory:** A tip or warning for a route or a stop.
 
-Two routes are connected when they share a stop with exactly the same name. Passengers change buses there.
+Two routes are connected when they share a stop with exactly the same name. Passengers can change buses at shared stops.
 
-### Fare rule
+### Fare Rule
 
-The fare grows with the number of stops you ride on one bus:
+The fare grows with the number of stops travelled on one bus:
 
+```text
+fare = 30 + (200 - 30) × (stops ridden ÷ hops on the route)
 ```
-fare = 30 + (200 - 30) × (stops ridden ÷ hops on the route), rounded to the nearest 10
-```
 
-Riding a whole route costs 200 PKR. When a journey needs two buses, the fares are added.
+The result is rounded to the nearest 10. Riding a whole route costs 200 PKR. When a journey needs two buses, the fares are added.
 
-### Route search
+### Route Search
 
-The stops and rides are treated as a graph, and the search uses **Dijkstra's algorithm**. The search remembers two things together: the stop you are at and the bus you are on. There are only two kinds of moves:
+The stops and rides are treated as a graph, and the search uses **Dijkstra's algorithm**. The search considers both the current stop and the bus being used.
 
-- **Ride** to the next or previous stop on the same bus (cost: minutes between the stops)
-- **Board** a bus, or change to another bus, at the current stop (cost: waiting time, which is half the bus interval)
+- **Ride:** Travel to the next or previous stop on the same bus. The cost is the travel time between stops.
+- **Board or transfer:** Board a bus or change buses at the current stop. The cost is the estimated waiting time, based on half the bus interval.
 
 The three modes use the same algorithm with different costs:
 
 | Mode | Extra cost when boarding | Extra cost per stop ridden |
 |---|---|---|
-| fastest | none | none |
-| cheapest | minimum fare × 1000 | stop fare × 1000 |
-| fewest transfers | 1000 | none |
+| `fastest` | None | None |
+| `cheapest` | Minimum fare × 1000 | Stop fare × 1000 |
+| `fewest_transfers` | 1000 | None |
 
-The large multiplier makes fare (or the number of buses) the main priority, and minutes only break ties. The code is in [`planner/services.py`](planner/services.py).
+The large multiplier makes fare or the number of buses the main priority in the relevant modes, while travel time helps break ties. The route-search logic is implemented in `planner/services.py`.
 
 ### Assumptions
 
-- Routes run in both directions with the same travel times
-- Estimates come from scheduled data, not live tracking
-- Each stop appears only once on a route
+- Routes run in both directions with the same travel times.
+- Estimates come from scheduled data, not live tracking.
+- Each stop appears only once on a route.
 
 ---
 
 ## Testing
 
-The 20 tests build a small test network of their own, so they keep working when the real data changes. They check the three modes, reverse trips, the fare rule, safety advisories, every API endpoint and error code, and that the real data loads correctly.
+The existing project README reports 20 automated tests. These tests cover journey-planning modes, reverse trips, fare calculations, safety advisories, API endpoints, error responses, and loading the transport data.
+
+Run the test suite with:
+
+```bash
+python manage.py test
+```
 
 ---
 
 ## Troubleshooting
 
-| Problem | Fix |
+| Problem | Possible solution |
 |---|---|
-| `database "karachi_transport" does not exist` | Create the database (step 3) |
-| `psycopy2-binary` not found | The package name is `psycopg2-binary` (with a **g**) |
-| `django-admin.exe` blocked by Windows policy | Use `python -m django <command>` instead of `django-admin <command>` |
-| `module 'planner.views' has no attribute ...` | The file must be named `views.py` (with an **s**) |
-| `/api/plan/` returns 400 "must be stop ids" | Use real numeric ids from `/api/stops/`, not placeholder text |
+| Database does not exist | Create the database configured in `config/settings.py`. |
+| `psycopg2-binary` is not found | Install dependencies using `pip install -r requirements.txt`. |
+| Django commands are not recognised | Activate the virtual environment and run commands using `python manage.py`. |
+| API returns an invalid stop ID error | Use valid stop IDs retrieved from `/api/stops/`. |
+| Database tables are missing | Run `python manage.py migrate`. |
 
 ---
 
-## Limitations and future work
+## Limitations and Future Work
 
-- No live bus tracking
-- Only five routes; times, intervals and safety messages need verification
-- Fastest mode can suggest several bus changes, because waiting time is counted at every boarding (a fixed transfer penalty could be added)
-- Stop coordinates are not filled in yet, so a map view is not possible until they are added
+- No live bus tracking.
+- Only five routes are included; travel times, intervals, and safety messages need verification.
+- The fastest mode can suggest several bus changes because waiting time is counted at every boarding.
+- Stop coordinates are not filled in yet, so a map view is not possible until they are added.
 
 ---
 
@@ -245,7 +308,7 @@ Software Project Management (506), 6th semester, University of Karachi.
 
 | Name | Role |
 |---|---|
-| **Nida Hafeez** | Team Lead |
-| **Mahnoor Khan & Romaisa Ejaz**| Backend development |
-| **Ayesha Abid && Ayesha Khan** | Frontend / UI-UX |
-| **Nida Hafeez and Mahnoor Khan** | Data research |
+| Nida Hafeez | Team Lead |
+| Mahnoor Khan & Romaisa Ejaz | Backend development |
+| Ayesha Abid && Ayesha Khan | Frontend / UI-UX |
+| Nida Hafeez and Mahnoor Khan | Data research |
