@@ -70,38 +70,45 @@ The data is stored in `transport/routes_data.json`. Stop lists come from the tea
 ```text
 Karachi-Public-Transport-Companion/
 ├── config/
+│   ├── __init__.py
+│   ├── .git.py
 │   ├── settings.py
 │   ├── urls.py
-│   ├── asgi.py
 │   └── wsgi.py
-├── planner/
-│   ├── services.py
-│   ├── views.py
-│   ├── urls.py
-│   └── tests.py
-├── transport/
-│   ├── models.py
-│   ├── serializers.py
+├── planners/
+│   ├── __init__.py
 │   ├── admin.py
-│   ├── routes_data.json
-│   └── management/
-│       └── commands/
-│           └── seed_data.py
-├── web/
-│   ├── views.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── services.py
+│   ├── test_tests.py
 │   ├── urls.py
-│   ├── templates/
-│   │   └── web/
-│   │       ├── base.html
-│   │       ├── home.html
-│   │       └── results.html
+│   └── views.py
+├── transport/
+│   ├── management/
+│   │   └── commands/
+│   │       ├── __init__.py
+│   │       └── seed_data.py
+│   ├── migrations/
+│   │   ├── __init__.py
+│   │   └── initial.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── routes_data.json
+│   ├── serializers.py
+│   ├── tests.py
+│   └── views.py
+├── web/
 │   └── static/
 │       └── web/
+│           ├── images/
+│           │   └── Karachi bus.jpg
 │           └── style.css
-├── manage.py
-├── requirements.txt
 ├── .gitignore
-└── README.md
+├── manage.py
+├── README.md
+└── requirements.txt
 ```
 
 ---
